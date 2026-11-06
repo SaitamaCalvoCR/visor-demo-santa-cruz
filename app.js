@@ -15,7 +15,11 @@ function showToast(message) {$('toast').textContent = message; $('toast').hidden
 function initMap() {
   if (!window.L) throw new Error('No se pudo cargar el mapa.');
   map = L.map('map', {preferCanvas: true, zoomControl: true, minZoom: 9, maxZoom: 20}).setView([10.36, -85.49], 12);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+  L.layerGroup([
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxNativeZoom: 19, maxZoom: 20, attribution: 'Imágenes &copy; Esri, Maxar, Earthstar Geographics'}),
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {maxNativeZoom: 19, maxZoom: 20}),
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {maxNativeZoom: 19, maxZoom: 20})
+  ]).addTo(map);
   polygons = L.geoJSON(null, {style, onEachFeature(feature, layer) {
     layers.set(feature.properties.uid, layer);
     layer.bindTooltip(el('span', feature.properties.codigo || 'Sin identificación'), {sticky: true});
@@ -96,10 +100,12 @@ async function loadData() {
     $('total').textContent = integer.format(summary.total); $('complete').textContent = integer.format(summary.completos); $('incomplete').textContent = integer.format(summary.incompletos);
     $('date').textContent = new Date(summary.fecha + 'T12:00:00').toLocaleDateString('es-CR', {day: '2-digit', month: 'short', year: 'numeric'});
     $('load-status').textContent = integer.format(summary.total) + ' predios · listo';
-    ['plano', 'finca', 'codigo'].forEach(field => {const option = $('missing').querySelector('[value="' + field + '"]'); const count = summary[field === 'codigo' ? 'sin_codigo' : 'sin_' + field]; option.textContent += ' (' + integer.format(count) + ')';});
+    const missingLabels = {plano: 'Sin plano', finca: 'Sin finca', codigo: 'Sin identificación'};
+    Object.entries(missingLabels).forEach(([field, label]) => {const option = $('missing').querySelector('[value="' + field + '"]'); const count = summary[field === 'codigo' ? 'sin_codigo' : 'sin_' + field]; option.textContent = label + ' (' + integer.format(count) + ')';});
     $('search').disabled = false; $('missing').disabled = false;
     render(); districtBounds = polygons.getBounds(); map.fitBounds(districtBounds, {padding: [25, 25]}); $('loading').hidden = true;
   } catch (error) {
+    console.error('Error al cargar el catastro:', error);
     $('loading').hidden = true; $('error').hidden = false; $('error-message').textContent = error.message; $('load-status').textContent = 'Error de carga';
   }
 }

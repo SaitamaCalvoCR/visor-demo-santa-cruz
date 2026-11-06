@@ -32,7 +32,8 @@ python -m http.server 8031 --bind 127.0.0.1
 
 Abrir http://127.0.0.1:8031 desde esta carpeta. Se requiere servidor HTTP para
 leer el GeoJSON. No hay build ni backend. Dependencias vendorizadas: Leaflet
-1.9.4 y Lucide 0.468.0. El fondo cartografico utiliza OpenStreetMap.
+1.9.4 y Lucide 0.468.0. El fondo satelital utiliza Esri World Imagery con
+las referencias World Transportation y World Boundaries and Places, como Garabito.
 
 GitHub Pages se publica mediante `.github/workflows/pages.yml`.
 `work/` y `qa/` quedan excluidos del repositorio.

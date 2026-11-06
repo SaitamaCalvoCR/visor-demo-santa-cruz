@@ -8,11 +8,11 @@
   <title>Bolsón · Visor Predial Santa Cruz</title>
   <link rel="icon" href="assets/aterum-icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261105-2">
   <script defer src="vendor/leaflet.js"></script>
   <script defer src="vendor/lucide.min.js"></script>
-  <script defer src="filters.js"></script>
-  <script defer src="app.js"></script>
+  <script defer src="filters.js?v=20261105-2"></script>
+  <script defer src="app.js?v=20261105-2"></script>
 </head>
 <body>
   <header class="topbar">
@@ -36,7 +36,13 @@
           <label><input type="radio" name="status" value="incomplete"><span>Incompletos</span></label>
         </fieldset>
         <label class="field-label" for="missing">Dato faltante</label>
-        <select id="missing" disabled><option value="all">Cualquier campo</option value="plano">Sin plano</option><option value="finca">Sin finca</option><option value="codigo">Sin identificación</option><option value="both">Sin finca y sin plano</option></select>
+        <select id="missing" disabled>
+          <option value="all">Cualquier campo</option>
+          <option value="plano">Sin plano</option>
+          <option value="finca">Sin finca</option>
+          <option value="codigo">Sin identificación</option>
+          <option value="both">Sin finca y sin plano</option>
+        </select>
         <div class="filter-actions"><button id="clear" class="text-button" type="button"><i data-lucide="rotate-ccw"></i>Restablecer</button><button id="export" class="text-button" type="button" disabled><i data-lucide="download"></i>CSV</button></div>
       </div>
       <div class="results-header"><h2>Predios</h2><span id="result-count" role="status">Cargando…</span></div>
