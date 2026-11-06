@@ -8,11 +8,11 @@
   <title>Bolsón · Visor Predial Santa Cruz</title>
   <link rel="icon" href="assets/aterum-icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet.css">
-  <link rel="stylesheet" href="style.css?v=20261105-2">
+  <link rel="stylesheet" href="style.css?v=20261105-3">
   <script defer src="vendor/leaflet.js"></script>
   <script defer src="vendor/lucide.min.js"></script>
   <script defer src="filters.js?v=20261105-2"></script>
-  <script defer src="app.js?v=20261105-2"></script>
+  <script defer src="app.js?v=20261105-3"></script>
 </head>
 <body>
   <header class="topbar">
@@ -43,6 +43,11 @@
           <option value="codigo">Sin identificación</option>
           <option value="both">Sin finca y sin plano</option>
         </select>
+        <div class="opacity-control">
+          <div class="opacity-heading"><label class="field-label" for="opacity">Opacidad de predios</label><output id="opacity-value" for="opacity">28%</output></div>
+          <input id="opacity" type="range" min="0" max="100" step="1" value="28" aria-valuetext="28% de opacidad">
+          <div class="opacity-extremes"><span>Transparente</span><span>Sólido</span></div>
+        </div>
         <div class="filter-actions"><button id="clear" class="text-button" type="button"><i data-lucide="rotate-ccw"></i>Restablecer</button><button id="export" class="text-button" type="button" disabled><i data-lucide="download"></i>CSV</button></div>
       </div>
       <div class="results-header"><h2>Predios</h2><span id="result-count" role="status">Cargando…</span></div>

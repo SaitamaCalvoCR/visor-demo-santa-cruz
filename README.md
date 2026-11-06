@@ -5,6 +5,9 @@ Publicacion prevista: https://saitamacalvocr.github.io/visor-demo-santa-cruz/
 
 Consulta codigo predial, finca, plano y area. Filtros de presencia de datos,
 busqueda, seleccion cartografica y exportacion CSV de los resultados visibles.
+Deslizador de opacidad de relleno entre 0 y 100%, con preferencia guardada
+en el navegador y conservada al filtrar o seleccionar un predio. Los bordes
+se mantienen visibles aun con el relleno transparente.
 No incluye DEM, riesgo, fiscalidad, informacion de propietarios ni otros distritos.
 Los valores ausentes se muestran como "Sin dato"; no hay datos sinteticos.
 Completo significa que codigo, finca y plano estan presentes en la fuente,

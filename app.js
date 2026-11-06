@@ -3,14 +3,34 @@
 const $ = id => document.getElementById(id);
 const integer = new Intl.NumberFormat('es-CR');
 const area = new Intl.NumberFormat('es-CR', {maximumFractionDigits: 2});
-const state = {features: [], filtered: [], status: 'all', missing: 'all', query: '', page: 0, selected: null};
+const opacityKey = 'predial-bolson-opacity';
+function savedOpacity() {
+  try {
+    const saved = localStorage.getItem(opacityKey);
+    const value = Number(saved);
+    if (saved !== null && saved !== '' && Number.isFinite(value) && value >= 0 && value <= 100) return value / 100;
+  } catch {}
+  return .28;
+}
+const state = {features: [], filtered: [], status: 'all', missing: 'all', query: '', page: 0, selected: null, opacity: savedOpacity()};
 const pageSize = 10;
 let map, polygons, selectedLayer, districtBounds, debounce, toastTimer;
 const byId = new Map();
 const layers = new Map();
 function icons() { if (window.lucide) lucide.createIcons(); }
 function el(tag, text, className) {const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node;}
-function style(feature) {return {color: feature.properties.completo ? '#087b61' : '#ad485b', weight: 1.1, fillColor: feature.properties.completo ? '#21a27e' : '#df7c8e', fillOpacity: .28, opacity: .92};}
+function style(feature) {return {color: feature.properties.completo ? '#087b61' : '#ad485b', weight: 1.1, fillColor: feature.properties.completo ? '#21a27e' : '#df7c8e', fillOpacity: state.opacity, opacity: .92};}
+function selectedStyle(feature) {return {...style(feature), color: '#182b25', weight: 3};}
+function updateOpacity(value, persist = true) {
+  const percent = Math.max(0, Math.min(100, Math.round(Number(value))));
+  if (!Number.isFinite(percent)) return;
+  state.opacity = percent / 100;
+  $('opacity').value = String(percent);
+  $('opacity').setAttribute('aria-valuetext', percent + '% de opacidad');
+  $('opacity-value').textContent = percent + '%';
+  layers.forEach((layer, uid) => layer.setStyle(uid === state.selected ? selectedStyle(layer.feature) : style(layer.feature)));
+  if (persist) {try {localStorage.setItem(opacityKey, String(percent));} catch {}}
+}
 function showToast(message) {$('toast').textContent = message; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => {$('toast').hidden = true;}, 2400);}
 function initMap() {
   if (!window.L) throw new Error('No se pudo cargar el mapa.');
@@ -24,7 +44,7 @@ function initMap() {
     layers.set(feature.properties.uid, layer);
     layer.bindTooltip(el('span', feature.properties.codigo || 'Sin identificación'), {sticky: true});
     layer.on('click', () => selectParcel(feature.properties.uid, false));
-    layer.on('mouseover', () => {if (state.selected !== feature.properties.uid) layer.setStyle({weight: 2.5, fillOpacity: .48});});
+    layer.on('mouseover', () => {if (state.selected !== feature.properties.uid) layer.setStyle({weight: 2.5});});
     layer.on('mouseout', () => {if (state.selected !== feature.properties.uid) layer.setStyle(style(feature));});
   }}).addTo(map);
   $('fit').addEventListener('click', () => {if (districtBounds) map.fitBounds(districtBounds, {padding: [22, 22]});});
@@ -39,7 +59,7 @@ function selectParcel(uid, zoom) {
   if (!feature || !layer) return;
   if (selectedLayer) polygons.resetStyle(selectedLayer);
   state.selected = uid; selectedLayer = layer;
-  layer.setStyle({color: '#182b25', weight: 3, fillOpacity: .55});
+  layer.setStyle(selectedStyle(feature));
   layer.bringToFront();
   if (zoom) map.fitBounds(layer.getBounds(), {padding: [45, 45], maxZoom: 18});
   const p = feature.properties;
@@ -113,6 +133,7 @@ $('search').addEventListener('input', () => {clearTimeout(debounce); debounce = 
 document.querySelectorAll('input[name="status"]').forEach(input => input.addEventListener('change', () => {state.status = input.value; state.missing = 'all'; $('missing').value = 'all'; state.page = 0; render();}));
 $('missing').addEventListener('change', () => {state.missing = $('missing').value; state.page = 0; if (state.missing !== 'all') {state.status = 'incomplete'; document.querySelector('input[name="status"][value="incomplete"]').checked = true;} render();});
 $('clear').addEventListener('click', reset);
+$('opacity').addEventListener('input', event => updateOpacity(event.target.value));
 $('previous').addEventListener('click', () => {state.page--; renderList();});
 $('next').addEventListener('click', () => {state.page++; renderList();});
 $('close-detail').addEventListener('click', closeDetail);
@@ -121,4 +142,5 @@ $('mobile-collapse').addEventListener('click', () => {const collapsed = document
 $('export').addEventListener('click', () => {const blob = new Blob([PredialFilters.csv(state.filtered)], {type: 'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const anchor = el('a'); anchor.href = url; anchor.download = 'predios_bolson_filtrados.csv'; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); showToast(integer.format(state.filtered.length) + ' predios exportados');});
 $('copy').addEventListener('click', async () => {const p = byId.get(state.selected)?.properties; if (!p) return; const text = ['Distrito: Bolsón, Santa Cruz', 'Código: ' + (p.codigo || 'Sin dato'), 'Finca: ' + (p.finca || 'Sin dato'), 'Plano: ' + (p.plano || 'Sin dato'), 'Área: ' + area.format(p.area_m2) + ' m²'].join('\n'); try {await navigator.clipboard.writeText(text); showToast('Datos copiados');} catch {showToast('No se pudo acceder al portapapeles');}});
 document.addEventListener('keydown', event => {if (event.key === 'Escape') closeDetail();});
+updateOpacity(state.opacity * 100, false);
 icons(); loadData();
