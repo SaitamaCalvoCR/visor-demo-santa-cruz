@@ -1,0 +1,24 @@
+{
+  "distrito": "Bolsón",
+  "codigo_distrito": "50302",
+  "canton": "Santa Cruz",
+  "provincia": "Guanacaste",
+  "fecha": "2026-11-05",
+  "fuente": "SIRI / SNIT",
+  "capa_fuente": "SIRI:catastro_detallado",
+  "seleccion": "PRM_PROVINCIA=5; PRM_CANTON=03; PRM_DISTRITO=02",
+  "total": 825,
+  "completos": 607,
+  "incompletos": 218,
+  "sin_plano": 218,
+  "sin_finca": 0,
+  "sin_codigo": 0,
+  "bounds": [
+    -85.51494870709477,
+    10.328120425947347,
+    -85.40581018958322,
+    10.369951573118223
+  ],
+  "criterio_completo": "Identificacion predial, finca y plano presentes en la fuente.",
+  "clasificacion": "Presencia de datos; no representa validacion juridica o registral."
+}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#182523">
+  <meta name="description" content="Demo de consulta predial del distrito de Bolsón, Santa Cruz, Guanacaste.">
+  <title>Bolsón · Visor Predial Santa Cruz</title>
+  <link rel="icon" href="assets/aterum-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="vendor/leaflet.js"></script>
+  <script defer src="vendor/lucide.min.js"></script>
+  <script defer src="filters.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img src="assets/aterum-logo.svg" alt="Aterum"><span class="brand-divider"></span><div><strong>Visor Predial</strong><span>Santa Cruz, Guanacaste</span></div></div>
+    <div class="header-end"><span class="demo-badge">DEMO · BOLSÓN</span><span id="load-status" role="status">Cargando</span></div>
+  </header>
+  <main class="workspace">
+    <aside id="sidebar" aria-label="Consulta y filtros">
+      <div class="sidebar-title"><div><span class="eyebrow">Distrito 50302</span><h1>Bolsón</h1></div><button id="mobile-collapse" class="icon-button mobile-only" type="button" aria-label="Contraer panel" title="Contraer panel"><i data-lucide="chevron-up"></i></button></div>
+      <div class="metrics" aria-label="Resumen del distrito">
+        <div><span>Predios</span><strong id="total">—</strong></div>
+        <div><span><b class="dot complete"></b>Completos</span><strong id="complete">—</strong></div>
+        <div><span><b class="dot incomplete"></b>Incompletos</span><strong id="incomplete">—</strong></div>
+      </div>
+      <div class="filter-panel">
+        <label class="field-label" for="search">Buscar predio</label>
+        <div class="search-box"><i data-lucide="search"></i><input id="search" type="search" placeholder="Código, finca o plano" autocomplete="off" disabled></div>
+        <fieldset class="segmented"><legend class="sr-only">Estado de los datos</legend>
+          <label><input type="radio" name="status" value="all" checked><span>Todos</span></label>
+          <label><input type="radio" name="status" value="complete"><span>Completos</span></label>
+          <label><input type="radio" name="status" value="incomplete"><span>Incompletos</span></label>
+        </fieldset>
+        <label class="field-label" for="missing">Dato faltante</label>
+        <select id="missing" disabled><option value="all">Cualquier campo</option value="plano">Sin plano</option><option value="finca">Sin finca</option><option value="codigo">Sin identificación</option><option value="both">Sin finca y sin plano</option></select>
+        <div class="filter-actions"><button id="clear" class="text-button" type="button"><i data-lucide="rotate-ccw"></i>Restablecer</button><button id="export" class="text-button" type="button" disabled><i data-lucide="download"></i>CSV</button></div>
+      </div>
+      <div class="results-header"><h2>Predios</h2><span id="result-count" role="status">Cargando…</span></div>
+      <div id="results" class="results" aria-label="Resultados de búsqueda"></div>
+      <div class="pagination"><button id="previous" class="icon-button" type="button" aria-label="Página anterior" title="Página anterior" disabled><i data-lucide="chevron-left"></i></button><span id="page-label">—</span><button id="next" class="icon-button" type="button" aria-label="Página siguiente" title="Página siguiente" disabled><i data-lucide="chevron-right"></i></button></div>
+      <footer class="source"><span>Fuente: SIRI / SNIT</span><span id="date"></span><span class="source-note">Completitud: presencia de código, finca y plano en la fuente. No equivale a validación registral.</span></footer>
+    </aside>
+    <section class="map-area" aria-label="Mapa de predios de Bolsón">
+      <div id="map"></div>
+      <div class="map-toolbar"><button id="fit" class="icon-button" type="button" title="Ver distrito completo" aria-label="Ver distrito completo"><i data-lucide="maximize"></i></button></div>
+      <div class="map-legend" aria-label="Leyenda"><span><b class="dot complete"></b>Datos completos</span><span><b class="dot incomplete"></b>Datos incompletos</span></div>
+      <div id="map-message" class="map-message" role="status" hidden>Sin coincidencias</div>
+      <article id="detail" class="detail" aria-label="Ficha del predio" hidden>
+        <div class="detail-head"><div><span class="eyebrow">Ficha predial</span><h2 id="detail-title"></h2></div><button id="close-detail" class="icon-button" type="button" aria-label="Cerrar ficha" title="Cerrar ficha"><i data-lucide="x"></i></button></div>
+        <div id="detail-badge" class="data-badge"></div>
+        <dl id="detail-fields"></dl>
+        <div id="detail-missing" class="detail-missing" hidden></div>
+        <div class="detail-footer"><span>Bolsón · Santa Cruz</span><button id="copy" class="icon-button" type="button" title="Copiar datos" aria-label="Copiar datos"><i data-lucide="copy"></i></button></div>
+      </article>
+      <div id="loading" class="loading"><span class="spinner" aria-hidden="true"></span><strong>Cargando catastro…</strong></div>
+      <div id="error" class="error" role="alert" hidden><strong>No se pudo cargar el catastro</strong><p id="error-message"></p><button id="retry" class="text-button" type="button">Reintentar</button></div>
+    </section>
+  </main>
+  <div id="toast" role="status" hidden></div>
+</body>
+</html>
